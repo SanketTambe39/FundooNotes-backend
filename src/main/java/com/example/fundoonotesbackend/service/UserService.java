@@ -1,6 +1,7 @@
 package com.example.fundoonotesbackend.service;
 
 import com.example.fundoonotesbackend.dto.UserDTO;
+import com.example.fundoonotesbackend.dto.VerifyUser;
 import com.example.fundoonotesbackend.exceptions.UserRegistrationException;
 import com.example.fundoonotesbackend.model.UserData;
 import com.example.fundoonotesbackend.repo.UserRepo;
@@ -20,6 +21,9 @@ public class UserService implements IUserService {
 
     @Autowired
     Token myToken;
+
+    @Autowired
+    OTPService otpService;
 
     @Override
     public Response addUser(UserDTO userDTO) {
@@ -65,5 +69,19 @@ public class UserService implements IUserService {
     @Override
     public Optional<UserData> getUserByEmailId(String emailId) {
         return userRepo.findByEmailid(emailId);
+    }
+    @Override
+    public Response verifyUser(VerifyUser uservar) {
+        Optional<UserData> isPresent = userRepo.findByEmailid(uservar.getEmail_id());
+        if(isPresent.isPresent()) {
+
+            UserData userData = isPresent.get();
+            if(otpService.getOTP(uservar.getEmail_id()) == uservar.getOtp()) {
+                userData.setVerify(true);
+                userRepo.save(userData);
+                return new Response(200, "User Successfully verified", isPresent);
+            }
+        }
+        return new Response(200, "Wrong OTP", null);
     }
 }

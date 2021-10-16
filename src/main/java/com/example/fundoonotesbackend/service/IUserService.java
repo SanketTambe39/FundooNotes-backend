@@ -1,6 +1,7 @@
 package com.example.fundoonotesbackend.service;
 
 import com.example.fundoonotesbackend.dto.UserDTO;
+import com.example.fundoonotesbackend.dto.VerifyUser;
 import com.example.fundoonotesbackend.model.UserData;
 import com.example.fundoonotesbackend.util.Response;
 
@@ -15,5 +16,6 @@ public interface IUserService {
     List<UserData> getUsers();
     UserData getUserById(Long userId);
     Optional<UserData> getUserByEmailId(String emailId);
+    Response verifyUser(VerifyUser uservar);
 
 }
