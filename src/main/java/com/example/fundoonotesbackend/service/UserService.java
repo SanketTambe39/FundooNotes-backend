@@ -23,6 +23,9 @@ public class UserService implements IUserService {
     Token myToken;
 
     @Autowired
+    IMailService emailService;
+
+    @Autowired
     OTPService otpService;
 
     @Override
@@ -34,6 +37,9 @@ public class UserService implements IUserService {
         UserData userData = new UserData(userDTO);
         userRepo.save(userData);
         String token = myToken.createToken(Math.toIntExact(userData.getUserId()));
+        int otp = otpService.generateOTP(userDTO.email);
+        emailService.sendOTPMessage(userDTO.email, "Registration OTP","Token = "+token
+                +"Your OTP = "+otp);
         return new Response(200, "User Successfully added",token);
     }
 
